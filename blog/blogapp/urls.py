@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.main_view),        # главная страница
     path('category', views.category),  # category
     path('contact', views.contact),    # contact
+    path('paginator', views.paginator),    # идем на вьюшку в функцию paginator
 #    path('tovar-list', views.TovarListView.as_view()),
     path('tovar-list', views.CategoryListView.as_view()),
     path('tovar-detail/<int:pk>/', views.TovarDetailView.as_view()) # pk - первичный ключ
