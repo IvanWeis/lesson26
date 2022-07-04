@@ -1,6 +1,9 @@
+from django.forms import forms
+from django.http import HttpResponse
 from django.shortcuts import render
 from blogapp.models import Category, Tovar  # может подкрашиваться
 from django.views.generic import ListView, DetailView
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 def main_view(request):
@@ -13,6 +16,38 @@ def category(request): # на blogapp/category.html передаем объед�
 
 def contact(request):
     return render(request, 'blogapp/contact.html', context={}) # запускаем страницу LETTER
+
+from django import forms
+class UserForm(forms.Form):
+#    number = forms.IntegerField()
+    number = forms.IntegerField()
+
+def paginator(request):
+    categories = Category.objects.all() # выбираем все Категории
+    submitbutton= request.POST.get("submit")
+    number=1
+    form= UserForm(request.POST or None)
+    if form.is_valid():
+       number= form.cleaned_data.get("number")
+
+    # Paginator:
+    paginator = Paginator(categories, number)
+    page = request.GET.get('page')
+    try:
+        categories = paginator.page(page)
+    except PageNotAnInteger:
+        categories = paginator.page(1)
+    except EmptyPage:
+        categories = paginator.page(paginator.num_pages)
+
+    context= {'form': form,
+              'submitbutton': submitbutton,
+              'number':number,
+              "categories": categories}
+
+    return render(request, 'blogapp/paginator.html', context)
+
+
 
 # CRUD
 # Получить список Товаров с помощью ListView:
