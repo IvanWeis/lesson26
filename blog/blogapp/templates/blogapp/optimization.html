@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Optimization</h1> <!-- param - переменная в шаблоне -->
+        {% with param=tovars %}
+
+            {% for item in param %}
+                <a>{{ item.name }}</a> <!-- имя (name) товара -->
+                <a>{{ item.category.name }}</a> <!-- имя (name) категории -->
+                <br>
+                <hr>
+            {% endfor %}
+
+            <h4>Второй раз</h4>
+            {% for item in param %}
+                <a>{{ item.name }}</a>
+                <a>{{ item.category.name }}</a>
+                <br>
+                <hr>
+            {% endfor %}
+
+        {% endwith %}
+</body>
+</html>
