@@ -11,7 +11,7 @@ def main_view(request):
 
 def category(request): # на blogapp/category.html передаем объединенный context (Category и Tovar)
     categories = Category.objects.all() # выбираем все Категории и отправляем на страницу
-    tovars = Tovar.objects.all() # выбираем все Тщвары и отправляем на страницу
+    tovars = Tovar.objects.all() # выбираем все Товары и отправляем на страницу
     return render(request, 'blogapp/category.html', context={'categories' : categories, 'tovars' : tovars})
 
 def contact(request):
@@ -46,6 +46,17 @@ def paginator(request):
               "categories": categories}
 
     return render(request, 'blogapp/paginator.html', context)
+
+# ОПТИМИЗАЦИЯ ++++++++++++++++++
+def optimization(request):
+    categories = Category.objects.all() # выбираем все Категории
+#    tovars = Tovar.objects.all() # выбираем все Товары
+    tovars = Tovar.objects.select_related('category').all() # выбираем все Товары и связанные категории
+    context = {'tovars': tovars}
+    return render(request, 'blogapp/optimization.html', context=context) # запускаем страницу OPTIMIZATION
+
+
+
 
 
 
