@@ -1,11 +1,16 @@
 from django.forms import forms
 from django.http import HttpResponse
 from django.shortcuts import render
+from rest_framework import viewsets
+
 from blogapp.models import Category, Tovar  # может подкрашиваться
 from django.views.generic import ListView, DetailView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
+from .serializers import CategorySerializer
+
+
 def main_view(request):
     return render(request, 'blogapp/index.html', context={}) # запускаем главную страницу
 
@@ -55,10 +60,13 @@ def optimization(request):
     context = {'tovars': tovars}
     return render(request, 'blogapp/optimization.html', context=context) # запускаем страницу OPTIMIZATION
 
+from .models import Category
+from .serializers import CategorySerializer
+from rest_framework import routers, serializers, viewsets
 
-
-
-
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 # CRUD
 # Получить список Товаров с помощью ListView:
