@@ -5,7 +5,5 @@ from rest_framework import routers, serializers, viewsets
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-
-
-def api_views():
-    return None
+#    queryset = Hero.objects.all().order_by('name')
+#    serializer_class = HeroSerializer
