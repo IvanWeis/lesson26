@@ -1,15 +1,11 @@
 from django.forms import forms
 from django.http import HttpResponse
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
 from blogapp.models import Category, Tovar  # может подкрашиваться
 from django.views.generic import ListView, DetailView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-# Create your views here.
-from .serializers import CategorySerializer
-
 
 def main_view(request):
     return render(request, 'blogapp/index.html', context={}) # запускаем главную страницу
@@ -61,12 +57,6 @@ def optimization(request):
     return render(request, 'blogapp/optimization.html', context=context) # запускаем страницу OPTIMIZATION
 
 from .models import Category
-from .serializers import CategorySerializer
-from rest_framework import routers, serializers, viewsets
-
-class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
 
 # CRUD
 # Получить список Товаров с помощью ListView:
@@ -103,19 +93,37 @@ class TovarDetailView(DetailView):
 
 # Метод get_context_data  1:33
 
-# из статьи
-
+# из статьи создание API (сериализаторы)
 from rest_framework import generics
 from . import serializers
 from django.contrib.auth.models import User
 
-
+# User
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
-
 
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
 
+# Tovar
+from .models import Tovar
+from rest_framework import generics, permissions
+from .serializers import TovarSerializer
+from .permissions import IsOwnerOrReadOnly
+
+class TovarList(generics.ListCreateAPIView):
+    queryset = Tovar.objects.all()
+    serializer_class = TovarSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class TovarDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Tovar.objects.all()
+    serializer_class = TovarSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly]
